@@ -1,0 +1,30 @@
+I wrote p3helper.c code myself and I used semex.c as a reference.
+I believe everything works perfectly under all conditions.
+
+initStudentStuff():
+First, a semaphore is created if one does not already exist. It is initialized
+with a value of 0 so that other robots do not open or create the 'countfile'.
+Once the 'countfile' is created and values have been written to it then semaphore
+is unlocked and future calls to initStudentStuff() open the already existing
+semaphore.
+
+placeWidget():
+Once this method is called the semaphore locks so that only one robot can edit
+'countfile' at any given time. This method is unlocked at the end of the method.
+
+p3helper.c:
+Coordination was achieved by using a 'countfile' to keep track of the number of 
+widgets (count) printed to stdout. 'countfile' also stored row, maxWidth, and 
+botCount. Row kept track of the current row in the pyramid. While in the top half 
+of the pyramid maxWidth kept track of the Peak of the pyramid. However, after 
+that Peak was passed maxWidth became the maximum width of the current row which 
+was decremented on each successive row after the Peak. botCount was used only in
+the bottom half of the pyramid to track the number of widgets in the bottom half.
+The placeWidget() is classified as a 'critical section' and thus, only one robot
+is allowed to place a widget at once and adjust the variables as necessary.
+The maxWidth of the pyramid was calculated by taking the ceiling of the
+squareroot of the total number of widgets (nrRobots * quota).
+Finally, clean up of the semaphores was done once the last widget was printed.
+Cleanup envolved closing the file, unlinking the file, closing and unlinking
+the semaphore.
+
